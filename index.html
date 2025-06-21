@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InLighn Tech • Ignite Your Career</title>
+
+    <!-- Assets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ------------------- 1. THEME TOKENS ------------------- */
+        :root {
+            --primary:#4361ee;
+            --secondary:#3f37c9;
+            --text:#333;
+            --bg:#f8f9fa;
+            --card:#fff;
+            --shadow-s:0 4px 8px rgba(0,0,0,.06);
+            --shadow-m:0 10px 20px rgba(0,0,0,.12);
+            --shadow-l:0 18px 38px rgba(0,0,0,.18);
+            --border:#e0e0e0;
+            --cursor:#fff;
+            --primary-color-rgb-val: 67, 97, 238; /* For rgba colors in JS/CSS, contact section */
+        }
+        .dark-mode{
+            --primary:#7209b7; --secondary:#560bad; --text:#f8f9fa; --bg:#121212;
+            --card:#1e1e1e; --border:#333; --cursor:#ececec;
+            --primary-color-rgb-val: 114, 9, 183; /* For rgba colors in JS/CSS, contact section */
+        }
+
+        /* ------------------- 2. GLOBAL RESET ------------------- */
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;transition:all .3s ease;cursor:none !important;}
+        html{scroll-behavior:smooth;}
+        body{min-height:100vh;color:var(--text);background:var(--bg);display:flex;flex-direction:column;padding-top:80px;} /* Added padding-top for fixed nav */
+
+        /* ------------------- 3. CUSTOM CURSOR ------------------- */
+        #custom-cursor,#cursor-follower{position:fixed;left:0;top:0;pointer-events:none;transform:translate(-50%,-50%);z-index:9999;}
+        #custom-cursor{width:10px;height:10px;background:var(--cursor);border-radius:50%;mix-blend-mode:difference;}
+        #cursor-follower{width:32px;height:32px;border:2px solid var(--cursor);border-radius:50%;opacity:.4;transition:transform .25s ease-out,width .25s ease-out,height .25s ease-out;}
+        #custom-cursor.active,#cursor-follower.active{transform:scale(1.4) translate(-50%,-50%);}
+        #custom-cursor.click{transform:scale(.8) translate(-50%,-50%);}
+
+        /* ------------------- 4. NAVBAR ------------------- */
+        .cylindrical-nav{position:fixed;inset:0 0 auto;display:flex;justify-content:space-between;align-items:center;height:80px;padding:0 40px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:0 0 50% 50%/0 0 100% 100%;box-shadow:var(--shadow-s);z-index:1000;backdrop-filter:blur(10px);}
+        .nav-logo{color:#fff;font-size:1.8rem;font-weight:700;text-decoration:none;letter-spacing:.5px;}
+        .nav-links{display:flex;list-style:none;gap:26px;}
+        .nav-links a{color:#fff;font-weight:500;position:relative;padding:8px 4px;text-decoration:none;}
+        .nav-links a::after{content:"";position:absolute;left:50%;bottom:-2px;width:0;height:2px;background:#fff;transition:width .3s ease,left .3s ease;}
+        .nav-links a:hover::after,.nav-links .active::after{width:100%;left:0;}
+        .theme-toggle{background:rgba(255,255,255,.25);border:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:1.2rem;color:#fff;cursor:pointer;}
+
+        /* ------------------- 5. HERO ------------------- */
+        .hero-section{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 20px 100px;min-height:calc(100vh - 80px);}
+        /* Tech background */
+        .hero-section::before{content:"";position:absolute;inset:0;background:url("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80") center/cover no-repeat;z-index:-2;filter:brightness(.45);}
+        .hero-section::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(67,97,238,.9)0%,rgba(63,55,201,.9)100%);mix-blend-mode:multiply;z-index:-1;}
+        .hero-section h1{font-size:clamp(2.5rem,5vw,4.2rem);font-weight:800;line-height:1.15;color:#fff;margin-bottom:22px;text-shadow:0 3px 8px rgba(0,0,0,.25);}
+        .hero-section h1 .flicker{animation:flicker 2s infinite alternate;}
+        .hero-section p{max-width:780px;color:rgba(255,255,255,.92);font-size:1.25rem;margin-bottom:40px;}
+        .hero-section .btn{background:#fff;color:var(--primary);font-weight:600;border-radius:50px;padding:14px 42px;box-shadow:var(--shadow-m);}
+        .hero-section .btn:hover{transform:translateY(-4px);}
+        /* floating tech glyphs */
+        .hero-deco{position:absolute;border-radius:50%;background:rgba(255,255,255,.1);animation:floating 6s ease-in-out infinite alternate,rotate 12s linear infinite;}
+        .one{width:90px;height:90px;top:18%;left:10%;} .two{width:140px;height:140px;bottom:18%;right:14%;} .three{width:60px;height:60px;top:32%;right:6%;} .four{width:110px;height:110px;bottom:12%;left:6%;}
+
+        /* ------------------- 6. INFO SECTION ------------------- */
+        .info-section{padding:90px 20px;text-align:center;overflow:hidden;}
+        .info-section h2{font-size:2.8rem;font-weight:700;color:var(--primary);margin-bottom:30px;opacity:0;transform:translateY(20px);}
+        .info-section p{font-size:1.1rem;color:var(--text);opacity:0;transform:translateY(20px);}
+        .info-content-layout{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:50px;margin-top:60px;}
+        .info-content-layout img{max-width:100%;border-radius:18px;box-shadow:var(--shadow-m);}
+
+        /* Feature cards */
+        .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:30px;margin-top:70px;}
+        .feature-card{background:var(--card);padding:32px;border-radius:18px;box-shadow:var(--shadow-s);text-align:center;border:1px solid var(--border);transform:translateY(30px);opacity:0;transition:transform .6s ease-out,opacity .6s ease-out,box-shadow .35s ease;}
+        .feature-card:hover{transform:translateY(-10px) rotateX(6deg);box-shadow:var(--shadow-l);}
+        .feature-card i{font-size:2.8rem;color:var(--primary);margin-bottom:18px;transition:transform .35s ease;}
+        .feature-card:hover i{transform:rotate(8deg);}
+
+        /* ------------------- 7. ABOUT BLOCKS ------------------- */
+        .about-us-section{background:var(--card);padding:90px 20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+        .about-us-section h2{text-align:center;font-size:2.8rem;color:var(--primary);margin-bottom:70px;}
+        .about-content-wrapper{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start;}
+        .about-text-block{background:var(--bg);padding:24px;border-left:5px solid var(--primary);border-radius:10px;box-shadow:var(--shadow-s);opacity:0;transform:translateX(-50px);}
+        .about-text-block h3{font-size:1.6rem;color:var(--primary);margin-bottom:8px;}
+        .about-text-block p{font-size:1.05rem;}
+        .about-content-right img{max-width:100%;border-radius:18px;box-shadow:var(--shadow-m);opacity:0;transform:translateX(60px);}
+
+        /* ------------------- 8. STATS ------------------- */
+        .stats-section{padding:90px 20px;background:linear-gradient(135deg,var(--primary)0%,var(--secondary)100%);color:#fff;text-align:center;}
+        .stats-section h2 { /* Added heading style for stats section */
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:36px;max-width:1000px;margin:auto;}
+        .stat-item{background:rgba(255,255,255,.12);backdrop-filter:blur(5px);padding:28px;border-radius:14px;box-shadow:var(--shadow-s);transform:translateY(30px);opacity:0;}
+        .stat-item .number{font-size:3.2rem;font-weight:700;margin-bottom:6px;}
+
+        /* ------------------- 9. TESTIMONIALS ------------------- */
+        .testimonials-section{padding:90px 20px;background:var(--bg);}
+        .testimonials-section h2{text-align:center;font-size:2.8rem;color:var(--primary);margin-bottom:60px;}
+        .testimonial-carousel{position:relative;max-width:900px;margin:auto;background:var(--card);padding:40px 60px 60px;border-radius:18px;box-shadow:var(--shadow-m); min-height: 400px; display: flex; justify-content: center; align-items: center;}
+        .testimonial-item{position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;transform:translateX(100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:transform .6s ease,opacity .6s ease;}
+        .testimonial-item.active-testimonial{position:relative;opacity:1;transform:translateX(0);}
+        .testimonial-item.prev-testimonial { transform: translateX(-100%); opacity: 0; }
+        .testimonial-item.next-testimonial { transform: translateX(100%); opacity: 0; }
+        .intern-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);}
+        .testimonial-item p{font-size:1.05rem;color:var(--text);max-width:680px; text-align: center;}
+        .author{font-weight:600;color:var(--primary);} .role{font-size:.9rem;opacity:.8;}
+        .carousel-nav-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(67,97,238,.8);color:#fff;border:none;border-radius:50%;width:42px;height:42px;display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow-s);}
+        .carousel-nav-btn:hover{background:var(--secondary);}
+        .carousel-nav-btn.prev{left:14px;} .carousel-nav-btn.next{right:14px;}
+        .carousel-dots{text-align:center;margin-top:26px;display:flex;justify-content:center;gap:10px;}
+        .carousel-dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:transform .3s ease;background-clip:padding-box;}
+        .carousel-dot.active{background:var(--primary);transform:scale(1.25);}
+
+        /* ------------------- 10. CONTACT SECTION ------------------- */
+        .contact-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 60px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+        }
+        .contact-info {
+            flex: 1;
+            min-width: 280px;
+            margin-bottom: 30px;
+        }
+        .contact-info h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: white; /* Ensure text is white */
+        }
+        .contact-info p {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            color: rgba(255,255,255,0.9);
+        }
+        .contact-info i {
+            margin-right: 10px;
+            width: 20px;
+        }
+        .contact-form {
+            flex: 1;
+            min-width: 280px;
+        }
+        .contact-form form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        .contact-form button {
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            background: white;
+            color: var(--primary);
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: var(--shadow-s); /* Apply shadow-s */
+        }
+        .contact-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-m); /* Apply shadow-m on hover */
+        }
+        .social-links {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+        .social-links a {
+            font-size: 1.4rem;
+            color: white; /* Social links are white in this section */
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .social-links a:hover {
+            color: rgba(255,255,255,0.7); /* Slightly dim on hover */
+            transform: translateY(-2px);
+        }
+
+        /* ------------------- 11. FOOTER ------------------- */
+        footer {
+            background-color: var(--bg); /* Footer background matches general bg */
+            color: var(--text);
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 0.9em;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+            margin-top: auto; /* Pushes footer to the bottom */
+            border-top: 1px solid var(--border); /* Added border-top */
+        }
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px 40px 20px;
+            gap: 30px;
+            text-align: left;
+        }
+        .footer-section {
+            flex: 1 1 250px;
+        }
+        .footer-section h2,
+        .footer-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            line-height: 2;
+        }
+        .footer-section a {
+            text-decoration: none;
+            color: var(--text);
+            transition: color 0.3s ease;
+        }
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+        .footer-section p {
+            color: var(--text);
+            opacity: 0.9;
+        }
+        .footer-section .social-links a {
+            color: var(--text); /* Matches general footer text color */
+        }
+        .footer-section .social-links a:hover {
+            color: var(--primary); /* Changes to primary color on hover */
+        }
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.8;
+        }
+
+
+        /* ------------------- 12. UTIL ANIMATIONS ------------------- */
+        @keyframes floating{0%{transform:translate(0,0);}50%{transform:translate(-14px,12px);}100%{transform:translate(0,0);}}
+        @keyframes rotate{from{rotate:0deg;}to{rotate:360deg;}}
+        @keyframes flicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1;}20%,24%,55%{opacity:.7;}}
+        @keyframes sparkle { /* New sparkle animation */
+            0% { text-shadow: 0 0 5px rgba(255,255,255,0.5), 0 0 10px rgba(255,255,255,0.3); }
+            50% { text-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.5); }
+            100% { text-shadow: 0 0 5px rgba(255,255,255,0.5), 0 0 10px rgba(255,255,255,0.3); }
+        }
+
+        /* Elements for Scroll Animations (initial hidden state for JS observer) */
+        .animate-on-scroll.hidden {
+            opacity: 0;
+            transform: translateY(20px); /* Default slide up */
+        }
+        .animate-on-scroll.hidden.from-left {
+            transform: translateX(-50px);
+        }
+        .animate-on-scroll.hidden.from-right {
+            transform: translateX(50px);
+        }
+        .animate-on-scroll.hidden.slide-in-top {
+             transform: translateY(-20px); /* Specific for top */
+        }
+        .animate-on-scroll.hidden.slide-in-bottom {
+             transform: translateY(20px); /* Specific for bottom */
+        }
+        .animate-on-scroll.hidden.zoom-out {
+            transform: scale(1.1); /* Zoom out initial state */
+        }
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translate(0, 0) scale(1); /* Final state for zoom-out also */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+
+        /* ------------------- 13. RESPONSIVE DESIGN ------------------- */
+        @media(max-width: 768px) {
+            .cylindrical-nav{height:auto;border-radius:0;padding:10px 20px;}
+            .nav-links{display:none;}
+            body{padding-top:70px;} /* Adjusted padding-top for mobile nav height */
+
+            .hero-section{padding:100px 20px 80px; min-height: 350px;}
+            .hero-section h1{font-size:2.5rem;margin-bottom:15px;}
+            .hero-section p{font-size:1rem;margin-bottom:30px;}
+            .hero-deco{display:none;} /* Hide decorative elements on mobile */
+
+            .info-section{padding:60px 15px;} /* Reduced padding */
+            .info-section h2{font-size:2.2em;margin-bottom:30px;}
+            .info-section p{font-size:1em;}
+            .info-content-layout { flex-direction: column; gap: 30px; }
+            .info-content-layout img { max-width: 90%; }
+            .features-grid { grid-template-columns: 1fr; gap: 20px; }
+
+            .about-us-section { padding: 60px 15px; }
+            .about-us-section h2 { font-size: 2.2em; margin-bottom: 40px; }
+            .about-content-wrapper { grid-template-columns: 1fr; gap: 30px; }
+            .about-text-block { transform: translateX(0) !important; } /* Override animation for mobile */
+            .about-content-right img { transform: translateX(0) !important; } /* Override animation for mobile */
+
+
+            .stats-section { padding: 60px 15px; }
+            .stats-section h2 { font-size: 2.2em; }
+            .stats-grid { grid-template-columns: 1fr; gap: 20px; }
+
+            .testimonials-section{padding:60px 15px;}
+            .testimonials-section h2 { font-size: 2.2em; margin-bottom: 40px; }
+            .testimonial-carousel { min-height: 380px; padding: 20px; }
+            .carousel-nav-btn.prev { left: 5px; }
+            .carousel-nav-btn.next { right: 5px; }
+
+            .contact-section { flex-direction: column; gap: 30px; }
+            .contact-info { margin-bottom: 0; }
+            .contact-form { width: 100%; }
+            .form-row { flex-direction: column; gap: 15px; }
+
+            .footer-content { flex-direction: column; text-align: center; }
+            .social-links { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- CUSTOM CURSOR -->
+    <div id="custom-cursor"></div><div id="cursor-follower"></div>
+    <!-- NAVBAR -->
+    <nav class="cylindrical-nav">
+        <a href="index.html" class="nav-logo">InLighn Tech</a>
+        <ul class="nav-links">
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="progress.html">Programs</a></li>
+            <li><a href="verify.html">Verify</a></li>
+            <li><a href="whyinlighn.html">Why InLighn</a></li>
+            <li><a href="connect.html">Connect</a></li>
+            <li><a href="myportal.html">My Portal</a></li>
+        </ul>
+        <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+    </nav>
+
+    <!-- =============== MAIN CONTENT =============== -->
+    <div class="main-content">
+        <!-- HERO -->
+        <section class="hero-section">
+            <h1 class="animate-on-scroll hidden">Ignite Your Career: Real‑World Experience with <span class="flicker">INLIGHN TECH</span></h1>
+            <p class="animate-on-scroll hidden">Unlock your potential through our cutting‑edge internship programs in Cyber Security, Full Stack Development, Data Science, and more. Gain practical skills today; lead innovation tomorrow.</p>
+            <a href="programs.html" class="btn animate-on-scroll hidden">Explore Internships</a>
+            <span class="hero-deco one" data-parallax-speed="1.4"></span>
+            <span class="hero-deco two" data-parallax-speed="1.9"></span>
+            <span class="hero-deco three" data-parallax-speed="1.2"></span>
+            <span class="hero-deco four" data-parallax-speed="1.6"></span>
+        </section>
+
+        <!-- INFO (WE PROVIDE BEST ...) -->
+        <section class="info-section container">
+            <h2 class="animate-on-scroll hidden slide-in-top">Your Path to Professional Excellence Starts Here</h2>
+            <div class="info-content-layout">
+                <div class="image-content animate-on-scroll hidden from-left"><img src="https://www.shutterstock.com/image-photo/business-technology-internet-network-concept-600nw-559453117.jpg" alt="Hands‑on coding"/></div>
+                <div class="text-content">
+                    <p class="animate-on-scroll hidden slide-in-bottom">At INLIGHN TECH, we're dedicated to bridging the gap between academic knowledge and industry demands. Our immersive programs empower aspiring professionals with hands‑on expertise in key tech domains, ensuring you're not just learning, but truly growing.</p>
+                    <a href="about.html" class="btn animate-on-scroll hidden">Know More</a>
+                </div>
+            </div>
+
+            <!-- FEATURE CARDS -->
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll hidden"><i class="fas fa-project-diagram"></i><h3>Real‑World Projects</h3><p>Gain hands‑on experience with live industry projects and build a portfolio that stands out.</p></div>
+                <div class="feature-card animate-on-scroll hidden"><i class="fas fa-users"></i><h3>Expert Mentorship</h3><p>Learn from seasoned professionals who guide you through every step of your journey.</p></div>
+                <div class="feature-card animate-on-scroll hidden"><i class="fas fa-certificate"></i><h3>Certified Programs</h3><p>Earn credentials that prove your expertise to employers worldwide.</p></div>
+                <div class="feature-card animate-on-scroll hidden"><i class="fas fa-clock"></i><h3>Flexible Learning</h3><p>Study at your own pace with online modules designed around your schedule.</p></div>
+            </div>
+        </section>
+
+        <!-- ABOUT US BLOCKS -->
+        <section class="about-us-section">
+            <div class="container">
+                <h2 class="animate-on-scroll hidden">Discover the Core of INLIGHN TECH</h2>
+                <div class="about-content-wrapper">
+                    <div class="about-content-left">
+                        <div class="about-text-block animate-on-scroll hidden from-left">
+                            <h3>About INLIGHN TECH</h3>
+                            <p>Founded on the principle of impactful learning, INLIGHN TECH provides transformative internship experiences designed to equip individuals with practical skills in Full‑Stack Development, Data Science, and Project Management, fostering the next generation of tech leaders.</p>
+                        </div>
+                        <div class="about-text-block animate-on-scroll hidden from-left">
+                            <h3>Our Mission</h3>
+                            <p>We empower ambitious students and young professionals through meticulously crafted, real‑world internship programs—instilling the practical skills and confidence necessary to thrive in tech.</p>
+                        </div>
+                        <div class="about-text-block animate-on-scroll hidden from-left">
+                            <h3>Our Vision</h3>
+                            <p>We envision a future where every aspiring technologist enjoys immersive, hands‑on experiences that cultivate a global community of skilled innovators.</p>
+                        </div>
+                    </div>
+                    <div class="about-content-right animate-on-scroll hidden from-right"><img src="https://img.freepik.com/premium-photo/light-bulb-with-blue-background-blue-light-bulb_1303517-1380.jpg" alt="Our Team"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STATS -->
+        <section class="stats-section">
+            <div class="container">
+                <h2 class="animate-on-scroll hidden">Driving Growth Through Key Metrics</h2>
+                <div class="stats-grid">
+                    <div class="stat-item animate-on-scroll hidden"><div class="number" data-target="5000">0</div><div class="label">INTERNS ENROLLED</div></div>
+                    <div class="stat-item animate-on-scroll hidden"><div class="number" data-target="9000">0</div><div class="label">PROJECTS COMPLETED</div></div>
+                    <div class="stat-item animate-on-scroll hidden"><div class="number" data-target="93">0</div><div class="label">SATISFACTION RATE %</div></div>
+                    <div class="stat-item animate-on-scroll hidden"><div class="number" data-target="30">0</div><div class="label">TOP INSTRUCTORS</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TESTIMONIALS -->
+        <section class="testimonials-section">
+            <div class="container">
+                <h2 class="animate-on-scroll hidden">Voices of Success</h2>
+                <div class="testimonial-carousel">
+                    <button class="carousel-nav-btn prev"><i class="fas fa-chevron-left"></i></button>
+                    <!-- Testimonial Items -->
+                    <div class="testimonial-item active-testimonial">
+                        <img src="https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?cs=srgb&dl=pexels-italo-melo-2379005.jpg&fm=jpg" class="intern-avatar" alt="Intern Avatar">
+                        <p>INLIGHN TECH transformed my theoretical knowledge into practical skills. The projects were challenging and truly prepared me for the industry. Highly recommend!</p>
+                        <div class="author">Sarah J.</div>
+                        <div class="role">Full-Stack Developer Intern</div>
+                    </div>
+                    <div class="testimonial-item">
+                        <img src="https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?cs=srgb&dl=pexels-italo-melo-2379005.jpg&fm=jpg" class="intern-avatar" alt="Intern Avatar">
+                        <p>The mentorship at INLIGHN TECH is unparalleled. My mentor guided me through complex data science problems, helping me build a robust portfolio.</p>
+                        <div class="author">John P.</div>
+                        <div class="role">Data Science Intern</div>
+                    </div>
+                    <div class="testimonial-item">
+                        <img src="https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?cs=srgb&dl=pexels-italo-melo-2379005.jpg&fm=jpg" class="intern-avatar" alt="Intern Avatar">
+                        <p>I appreciated the flexibility and depth of the cybersecurity program. I could learn at my own pace and still get expert feedback on my projects.</p>
+                        <div class="author">Aisha K.</div>
+                        <div class="role">Cyber Security Intern</div>
+                    </div>
+                    <div class="testimonial-item">
+                        <img src="https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?cs=srgb&dl=pexels-italo-melo-2379005.jpg&fm=jpg" class="intern-avatar" alt="Intern Avatar">
+                        <p>The real-world application of concepts was key. I built actual business intelligence dashboards that are now a highlight of my resume.</p>
+                        <div class="author">Mark R.</div>
+                        <div class="role">Business Analyst Intern</div>
+                    </div>
+                    <div class="testimonial-item">
+                        <img src="https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?cs=srgb&dl=pexels-italo-melo-2379005.jpg&fm=jpg" class="intern-avatar" alt="Intern Avatar">
+                        <p>From foundational concepts to advanced techniques, INLIGHN TECH provided everything I needed to excel in machine learning. Truly invaluable experience!</p>
+                        <div class="author">Li W.</div>
+                        <div class="role">AI/ML Intern</div>
+                    </div>
+                    <button class="carousel-nav-btn next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="carousel-dots"></div>
+            </div>
+        </section>
+
+        <!-- CONTACT & FOOTER -->
+        <section class="contact-section">
+            <div class="contact-info animate-on-scroll hidden from-left">
+                <h2>Let's Connect & Collaborate</h2>
+                <p style="margin-bottom: 40px;">Have questions about our programs, partnerships, or career opportunities? Our team is ready to assist you. Reach out today!</p>
+                <p><i class="fas fa-envelope"></i>hello@inlighntech.com</p>
+                <p><i class="fas fa-phone"></i>+91 9368842663</p>
+                <p><i class="fas fa-map-marker-alt"></i>VO-301, WeWork Prestige Central, Bengaluru</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="contact-form animate-on-scroll hidden from-right">
+                <form>
+                    <div class="form-row">
+                        <input type="text" placeholder="First Name" required>
+                        <input type="text" placeholder="Last Name" required>
+                    </div>
+                    <input type="email" placeholder="Email Address" required>
+                    <textarea rows="4" placeholder="Your Message..."></textarea>
+                    <button type="submit" class="btn">
+                        Send Message <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer stays same as provided by user -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h2>InLighn Tech</h2>
+                <p>Empowering tomorrow's tech leaders through immersive learning experiences in Cybersecurity, Full Stack Development, Data Science, and more.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Programs</h3>
+                <ul>
+                    <li><a href="#">Cybersecurity</a></li>
+                    <li><a href="#">Full Stack</a></li>
+                    <li><a href="#">Data Science</a></li>
+                    <li><a href="#">Data Analysis</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Verify Certificate</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 InLighn Tech. All rights reserved. Built with ❤️ and code.</p>
+        </div>
+    </footer>
+
+    <!-- ============= JS – reuse user’s original logic with minimal tweaks ============= -->
+    <script>
+        document.addEventListener('DOMContentLoaded',()=>{
+            /* ---- THEME TOGGLE ---- */
+            const themeToggle = document.getElementById('themeToggle');
+            const iconToggle = themeToggle.querySelector('i');
+            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    iconToggle.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    iconToggle.classList.replace('fa-sun', 'fa-moon');
+                }
+                localStorage.setItem('theme', theme);
+            }
+
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else if (prefersDarkScheme.matches) {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+
+            themeToggle.addEventListener('click', function () {
+                const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+                setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+            });
+
+            prefersDarkScheme.addEventListener('change', e => {
+                if (!localStorage.getItem('theme')) {
+                    setTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+
+
+            /* ---- CURSOR ---- */
+            const cur=document.getElementById('custom-cursor');const fol=document.getElementById('cursor-follower');
+            // Updated selectors to include more interactive elements
+            const interactiveElements = document.querySelectorAll('a, button, input:not([type="hidden"]), textarea, .feature-card, .stat-item, .testimonial-carousel, .carousel-nav-btn, .carousel-dot');
+
+            document.addEventListener('mousemove',e=>{
+                cur.style.left=e.clientX+'px';
+                cur.style.top=e.clientY+'px';
+                setTimeout(()=>{fol.style.left=e.clientX+'px';fol.style.top=e.clientY+'px';},80);
+            });
+
+            interactiveElements.forEach(el=>{
+                el.addEventListener('mouseenter',()=>{cur.classList.add('active');fol.classList.add('active');});
+                el.addEventListener('mouseleave',()=>{cur.classList.remove('active');fol.classList.remove('active');});
+            });
+            document.addEventListener('mousedown',()=>cur.classList.add('click'));
+            document.addEventListener('mouseup',()=>cur.classList.remove('click'));
+
+            /* ---- SCROLL ANIMATIONS ---- */
+            // Combined all animate-on-scroll elements for a single observer
+            const reveal = document.querySelectorAll('.animate-on-scroll.hidden');
+            const io = new IntersectionObserver((entries)=>{
+                entries.forEach(ent=>{
+                    if(ent.isIntersecting){
+                        ent.target.classList.remove('hidden');
+                        ent.target.classList.add('visible');
+                        io.unobserve(ent.target);
+                    }
+                });
+            },{threshold:.1, rootMargin: '0px 0px -50px 0px'}); // Adjust threshold and rootMargin as needed
+
+            reveal.forEach(el=>io.observe(el));
+
+
+            /* ---- STAT COUNTER ---- */
+            document.querySelectorAll('.number').forEach(num=>{
+                const target = parseInt(num.dataset.target);
+                const isPercentage = num.dataset.target.includes('%'); // Check for '%'
+                const ob = new IntersectionObserver((entries, observer)=>{
+                    entries.forEach(entry=>{
+                        if(entry.isIntersecting && !entry.target.classList.contains('animated-stat')){
+                            let c = 0;
+                            const increment = Math.ceil(target / 120); // Adjust divisor for speed
+                            const interval = setInterval(()=>{
+                                c += increment;
+                                if(c >= target){
+                                    c = target;
+                                    clearInterval(interval);
+                                }
+                                entry.target.textContent = c + (isPercentage ? '%' : (target > 999 ? '+' : '')); // Add '+' for large numbers
+                            }, 25); // Faster increment
+
+                            entry.target.classList.add('animated-stat'); // Mark as animated
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                },{threshold:.6});
+                ob.observe(num);
+            });
+
+
+            /* ---- TESTIMONIAL CAROUSEL ---- */
+            const items = [...document.querySelectorAll('.testimonial-item')];
+            let idx = 0;
+            const dotsWrap = document.querySelector('.carousel-dots');
+            let slideInterval; // Variable to store the interval ID
+
+            if (dotsWrap) { // Ensure dotsWrap exists before creating dots
+                items.forEach((_, i) => {
+                    const d = document.createElement('span');
+                    d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                    d.onclick = () => {
+                        stopAutoSlide(); // Stop auto-slide on manual navigation
+                        go(i);
+                        startAutoSlide(); // Restart auto-slide after manual navigation
+                    };
+                    dotsWrap.appendChild(d);
+                });
+            }
+            const buttons = {
+                prev: document.querySelector('.carousel-nav-btn.prev'),
+                next: document.querySelector('.carousel-nav-btn.next')
+            };
+
+            function go(n) {
+                // Ensure current active item is removed correctly
+                if (items[idx]) {
+                    items[idx].classList.remove('active-testimonial');
+                }
+                if (dotsWrap && dotsWrap.children[idx]) {
+                    dotsWrap.children[idx].classList.remove('active');
+                }
+
+                const prevIdx = idx; // Store previous index for transition class
+                idx = (n + items.length) % items.length;
+
+                // Add transition classes based on direction
+                items.forEach((item, i) => {
+                    item.classList.remove('prev-testimonial', 'next-testimonial');
+                    if (i === prevIdx) {
+                        item.classList.add(idx > prevIdx ? 'prev-testimonial' : 'next-testimonial');
+                    }
+                });
+
+                items[idx].classList.add('active-testimonial');
+                if (dotsWrap && dotsWrap.children[idx]) {
+                    dotsWrap.children[idx].classList.add('active');
+                }
+            }
+
+            if (buttons.prev) { // Check if buttons exist
+                buttons.prev.onclick = () => {
+                    stopAutoSlide();
+                    go(idx - 1);
+                    startAutoSlide();
+                };
+            }
+            if (buttons.next) { // Check if buttons exist
+                buttons.next.onclick = () => {
+                    stopAutoSlide();
+                    go(idx + 1);
+                    startAutoSlide();
+                };
+            }
+
+            function startAutoSlide() {
+                stopAutoSlide(); // Clear any existing interval before starting a new one
+                slideInterval = setInterval(() => go(idx + 1), 5000);
+            }
+
+            function stopAutoSlide() {
+                clearInterval(slideInterval);
+            }
+
+            // Initial setup for the first testimonial
+            if (items.length > 0) {
+                go(0); // Show the first testimonial
+                startAutoSlide(); // Start autoplay
+            }
+
+            // Pause/play on hover
+            const testimonialCarousel = document.querySelector('.testimonial-carousel');
+            if (testimonialCarousel) {
+                testimonialCarousel.onmouseenter = stopAutoSlide;
+                testimonialCarousel.onmouseleave = startAutoSlide;
+            }
+
+
+            /* ---- HERO PARALLAX ---- */
+            const hero = document.querySelector('.hero-section');
+            const decos = document.querySelectorAll('.hero-deco');
+
+            if (hero && decos.length > 0) { // Check if elements exist
+                hero.addEventListener('mousemove', e => {
+                    const {width, height, left, top} = hero.getBoundingClientRect();
+                    const x = (e.clientX - left - width / 2) / (width / 2);
+                    const y = (e.clientY - top - height / 2) / (height / 2);
+
+                    decos.forEach(d => {
+                        const sp = parseFloat(d.dataset.parallaxSpeed) || 1;
+                        d.style.transform = `translate(${x * -20 * sp}px,${y * -20 * sp}px)`;
+                    });
+                });
+            } else {
+                console.warn("Hero section or decorative elements for parallax not found.");
+            }
+        });
+    </script>
+</body>
+</html>
